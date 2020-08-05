@@ -1,4 +1,5 @@
 import { schema } from 'nexus'
+import { intArg } from 'nexus/components/schema'
 
 schema.objectType({
   name: 'User',
@@ -18,12 +19,24 @@ schema.objectType({
 schema.extendType({
   type: 'Query',
   definition(t) {
-    t.field('users', {
+    t.list.field('users', {
       nullable: false,
       type: 'User',
-      list: true,
       resolve(root, args, ctx) {
-        return [{ id: 1, email: 'hello@example.com', name: 'hello' }]
+        return ctx.db.user.findMany()
+      },
+    })
+    t.field('user', {
+      type: 'User',
+      args: {
+        id: intArg({ required: true }),
+      },
+      resolve(_root, args, ctx) {
+        return ctx.db.user.findOne({
+          where: {
+            id: args.id,
+          },
+        })
       },
     })
   },

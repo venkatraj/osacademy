@@ -1,4 +1,5 @@
 import { schema } from 'nexus'
+import { intArg } from 'nexus/components/schema'
 
 schema.objectType({
   name: 'Course',
@@ -10,21 +11,33 @@ schema.objectType({
       type: 'User',
       resolve(root, args, ctx) {
         return ctx
-      }
+      },
     })
-  }
+  },
 })
 
 schema.extendType({
   type: 'Query',
   definition(t) {
-    t.field('courses', {
+    t.list.field('courses', {
       nullable: false,
       type: 'Course',
-      list: true,
       resolve(root, args, ctx) {
-        return [{ id: 1, title: 'Learning GraphQL', description: 'lots of stuff'}]
-      }
-    })
-  }
+        return ctx.db.course.findMany()
+      },
+    }),
+      t.field('course', {
+        type: 'Course',
+        args: {
+          id: intArg({ required: true }),
+        },
+        resolve(_root, args, ctx) {
+          return ctx.db.course.findMany({
+            where: {
+              id: args.id,
+            },
+          })
+        },
+      })
+  },
 })
