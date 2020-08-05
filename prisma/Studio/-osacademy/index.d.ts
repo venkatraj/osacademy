@@ -436,7 +436,9 @@ export declare type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 export type User = {
   id: number
   email: string
+  password: string
   name: string
+  role: UserRole
   createdAt: Date
 }
 
@@ -445,7 +447,9 @@ export type User = {
 export type UserSelect = {
   id?: boolean
   email?: boolean
+  password?: boolean
   name?: boolean
+  role?: boolean
   createdAt?: boolean
   courses?: boolean | FindManyCourseEnrollmentArgs
 }
@@ -853,7 +857,6 @@ export type Course = {
   title: string
   description: string
   createdAt: Date
-  updatedAt: Date
 }
 
 
@@ -863,7 +866,6 @@ export type CourseSelect = {
   title?: boolean
   description?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
   users?: boolean | FindManyCourseEnrollmentArgs
 }
 
@@ -1694,7 +1696,6 @@ export type CourseWhereInput = {
   title?: string | StringFilter
   description?: string | StringFilter
   createdAt?: Date | string | DateTimeFilter
-  updatedAt?: Date | string | DateTimeFilter
   users?: CourseEnrollmentFilter | null
   AND?: Enumerable<CourseWhereInput>
   OR?: Array<CourseWhereInput>
@@ -1716,7 +1717,9 @@ export type CourseEnrollmentWhereInput = {
 export type UserWhereInput = {
   id?: number | IntFilter
   email?: string | StringFilter
+  password?: string | StringFilter
   name?: string | StringFilter
+  role?: UserRole | UserRoleFilter
   createdAt?: Date | string | DateTimeFilter
   courses?: CourseEnrollmentFilter | null
   AND?: Enumerable<UserWhereInput>
@@ -1727,7 +1730,9 @@ export type UserWhereInput = {
 export type UserOrderByInput = {
   id?: SortOrder
   email?: SortOrder
+  password?: SortOrder
   name?: SortOrder
+  role?: SortOrder
   createdAt?: SortOrder
 }
 
@@ -1758,7 +1763,6 @@ export type CourseOrderByInput = {
   title?: SortOrder
   description?: SortOrder
   createdAt?: SortOrder
-  updatedAt?: SortOrder
 }
 
 export type CourseWhereUniqueInput = {
@@ -1770,7 +1774,6 @@ export type CourseCreateWithoutUsersInput = {
   title: string
   description: string
   createdAt?: Date | string
-  updatedAt: Date | string
 }
 
 export type CourseCreateOneWithoutUsersInput = {
@@ -1790,7 +1793,9 @@ export type CourseEnrollmentCreateManyWithoutUserInput = {
 
 export type UserCreateInput = {
   email: string
+  password: string
   name: string
+  role?: UserRole
   createdAt?: Date | string
   courses?: CourseEnrollmentCreateManyWithoutUserInput
 }
@@ -1799,7 +1804,6 @@ export type CourseUpdateWithoutUsersDataInput = {
   title?: string
   description?: string
   createdAt?: Date | string
-  updatedAt?: Date | string
 }
 
 export type CourseUpsertWithoutUsersInput = {
@@ -1863,20 +1867,26 @@ export type CourseEnrollmentUpdateManyWithoutUserInput = {
 
 export type UserUpdateInput = {
   email?: string
+  password?: string
   name?: string
+  role?: UserRole
   createdAt?: Date | string
   courses?: CourseEnrollmentUpdateManyWithoutUserInput
 }
 
 export type UserUpdateManyMutationInput = {
   email?: string
+  password?: string
   name?: string
+  role?: UserRole
   createdAt?: Date | string
 }
 
 export type UserCreateWithoutCoursesInput = {
   email: string
+  password: string
   name: string
+  role?: UserRole
   createdAt?: Date | string
 }
 
@@ -1899,13 +1909,14 @@ export type CourseCreateInput = {
   title: string
   description: string
   createdAt?: Date | string
-  updatedAt: Date | string
   users?: CourseEnrollmentCreateManyWithoutCourseInput
 }
 
 export type UserUpdateWithoutCoursesDataInput = {
   email?: string
+  password?: string
   name?: string
+  role?: UserRole
   createdAt?: Date | string
 }
 
@@ -1953,7 +1964,6 @@ export type CourseUpdateInput = {
   title?: string
   description?: string
   createdAt?: Date | string
-  updatedAt?: Date | string
   users?: CourseEnrollmentUpdateManyWithoutCourseInput
 }
 
@@ -1961,7 +1971,6 @@ export type CourseUpdateManyMutationInput = {
   title?: string
   description?: string
   createdAt?: Date | string
-  updatedAt?: Date | string
 }
 
 export type CourseEnrollmentCreateInput = {

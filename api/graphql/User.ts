@@ -1,5 +1,5 @@
 import { schema } from 'nexus'
-import { intArg } from 'nexus/components/schema'
+import { intArg, stringArg } from 'nexus/components/schema'
 
 schema.objectType({
   name: 'User',
@@ -37,6 +37,37 @@ schema.extendType({
             id: args.id,
           },
         })
+      },
+    })
+  },
+})
+
+const UserInput = schema.inputObjectType({
+  name: 'UserInput',
+  definition(t) {
+    t.string('name')
+    t.string('email')
+    t.string('password')
+    t.string('role', { nullable: true })
+  },
+})
+
+schema.extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.field('createUser', {
+      type: 'User',
+      nullable: false,
+      args: {
+        data: UserInput,
+      },
+      resolve(_root, args, ctx) {
+        const newUser = ctx.db.user.create({
+          data: {
+            ...args.data,
+          },
+        })
+        return newUser
       },
     })
   },
