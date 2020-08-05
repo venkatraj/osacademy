@@ -23,6 +23,8 @@ scalar Json
 
 type Mutation {
   createUser(data: UserInput): User!
+  deleteUser(id: Int!): User!
+  editUser(data: UserInput, id: Int!): User!
 }
 
 type Query {
@@ -37,6 +39,8 @@ type User {
   email: String
   id: ID
   name: String
+  password: String
+  role: String
 }
 
 input UserInput {

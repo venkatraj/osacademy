@@ -7,6 +7,8 @@ schema.objectType({
     t.id('id')
     t.string('email')
     t.string('name')
+    t.string('password')
+    t.string('role')
     t.list.field('courses', {
       type: 'Course',
       resolve(root, args, ctx) {
@@ -68,6 +70,40 @@ schema.extendType({
           },
         })
         return newUser
+      },
+    })
+    t.field('editUser', {
+      type: 'User',
+      nullable: false,
+      args: {
+        id: intArg({ required: true }),
+        data: UserInput,
+      },
+      resolve(_root, args, ctx) {
+        const user = ctx.db.user.update({
+          where: {
+            id: args.id,
+          },
+          data: {
+            ...args.data,
+          },
+        })
+        return user
+      },
+    })
+    t.field('deleteUser', {
+      type: 'User',
+      nullable: false,
+      args: {
+        id: intArg({ required: true }),
+      },
+      resolve(_root, args, ctx) {
+        const user = ctx.db.user.delete({
+          where: {
+            id: args.id,
+          },
+        })
+        return user
       },
     })
   },
