@@ -10,9 +10,9 @@ schema.objectType({
       type: 'Course',
       resolve(root, args, ctx) {
         return ctx
-      }
+      },
     })
-  }
+  },
 })
 
 schema.extendType({
@@ -23,8 +23,8 @@ schema.extendType({
       type: 'User',
       list: true,
       resolve(root, args, ctx) {
-        return [{ id: 1, email: 'hello@example.com', name: 'hello'}]        
-      }
+        return [{ id: 1, email: 'hello@example.com', name: 'hello' }]
+      },
     })
-  }
+  },
 })

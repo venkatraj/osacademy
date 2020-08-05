@@ -12,6 +12,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "nexus": "^0.26.1"
+    "nexus": "^0.26.1",
+    "nexus-plugin-prisma": "^0.17.0",
+    "format": "npx prettier --write './**/*.{ts,md}'"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all"
+
   }
 }
