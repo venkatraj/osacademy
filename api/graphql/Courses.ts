@@ -1,5 +1,5 @@
 import { schema } from 'nexus'
-import { intArg } from 'nexus/components/schema'
+import { intArg, inputObjectType } from 'nexus/components/schema'
 
 schema.objectType({
   name: 'Course',
@@ -10,7 +10,7 @@ schema.objectType({
     t.list.field('users', {
       type: 'User',
       resolve(root, args, ctx) {
-        return ctx
+        return []
       },
     })
   },
@@ -32,12 +32,76 @@ schema.extendType({
           id: intArg({ required: true }),
         },
         resolve(_root, args, ctx) {
-          return ctx.db.course.findMany({
-            where: {
-              id: args.id,
-            },
-          })
+          return ctx.db.course
+            .findOne({
+              where: {
+                id: args.id,
+              },
+            })
+            .users()
         },
       })
+  },
+})
+
+const CourseInput = schema.inputObjectType({
+  name: 'CourseInput',
+  definition(t) {
+    t.string('title')
+    t.string('description')
+  },
+})
+
+schema.extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.field('createCourse', {
+      type: 'Course',
+      nullable: false,
+      args: {
+        data: CourseInput,
+      },
+      resolve(_root, args, ctx) {
+        const newCourse = ctx.db.course.create({
+          data: {
+            ...args.data,
+          },
+        })
+        return newCourse
+      },
+    })
+    t.field('editCourse', {
+      type: 'Course',
+      nullable: false,
+      args: {
+        id: intArg({ required: true }),
+        data: CourseInput,
+      },
+      resolve(_root, args, ctx) {
+        const course = ctx.db.course.update({
+          where: {
+            id: args.id,
+          },
+          data: {
+            ...args.data,
+          },
+        })
+        return course
+      },
+    })
+    t.field('deleteCourse', {
+      type: 'Course',
+      nullable: false,
+      args: {
+        id: intArg({ required: true }),
+      },
+      resolve(_root, args, ctx) {
+        return ctx.db.course.delete({
+          where: {
+            id: args.id,
+          },
+        })
+      },
+    })
   },
 })

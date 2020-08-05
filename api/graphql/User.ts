@@ -12,7 +12,7 @@ schema.objectType({
     t.list.field('courses', {
       type: 'Course',
       resolve(root, args, ctx) {
-        return ctx
+        return []
       },
     })
   },
@@ -34,11 +34,13 @@ schema.extendType({
         id: intArg({ required: true }),
       },
       resolve(_root, args, ctx) {
-        return ctx.db.user.findOne({
-          where: {
-            id: args.id,
-          },
-        })
+        return ctx.db.user
+          .findOne({
+            where: {
+              id: args.id,
+            },
+          })
+          .courses()
       },
     })
   },
