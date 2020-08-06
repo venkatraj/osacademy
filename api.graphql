@@ -38,12 +38,14 @@ type Mutation {
   deleteUser(id: Int!): User!
   editCourse(data: CourseInput, id: Int!): Course!
   editUser(data: UserInput, id: Int!): User!
+  login(email: String!, password: String!): AuthPayload
+  signup(data: UserInput): AuthPayload
 }
 
 type Query {
   course(id: Int!): Course
   courses: [Course!]!
-  user(id: Int!): User
+  me: User
   users: [User!]!
 }
 
@@ -57,8 +59,8 @@ type User {
 }
 
 input UserInput {
-  email: String
-  name: String
-  password: String
+  email: String!
+  name: String!
+  password: String!
   role: String
 }

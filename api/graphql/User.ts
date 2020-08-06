@@ -1,5 +1,7 @@
 import { schema } from 'nexus'
-import { intArg, stringArg } from 'nexus/components/schema'
+import { compare, hash } from 'bcryptjs'
+import { sign } from 'jsonwebtoken'
+import { APP_SECRET, getUserId } from '../utils'
 
 schema.objectType({
   name: 'User',
@@ -28,19 +30,19 @@ schema.extendType({
         return ctx.db.user.findMany()
       },
     })
-    t.field('user', {
+    t.field('me', {
       type: 'User',
-      args: {
-        id: intArg({ required: true }),
-      },
       resolve(_root, args, ctx) {
-        return ctx.db.user
-          .findOne({
-            where: {
-              id: args.id,
-            },
-          })
-          .courses()
+        const userId = getUserId(ctx.token)
+        if (!userId) {
+          throw new Error('Not Authorized User')
+        }
+
+        return ctx.db.user.findOne({
+          where: {
+            id: parseInt(userId),
+          },
+        })
       },
     })
   },
@@ -49,9 +51,9 @@ schema.extendType({
 const UserInput = schema.inputObjectType({
   name: 'UserInput',
   definition(t) {
-    t.string('name')
-    t.string('email')
-    t.string('password')
+    t.string('name', { required: true })
+    t.string('email', { required: true })
+    t.string('password', { required: true })
     t.string('role', { nullable: true })
   },
 })
@@ -59,6 +61,55 @@ const UserInput = schema.inputObjectType({
 schema.extendType({
   type: 'Mutation',
   definition(t) {
+    t.field('signup', {
+      type: 'AuthPayload',
+      args: {
+        data: UserInput,
+      },
+      resolve: async (_root, { data }, ctx) => {
+        const { name, email, password } = data
+        const hashedPassword = await hash(password, 10)
+        const user = await ctx.db.user.create({
+          data: {
+            name,
+            email,
+            password: hashedPassword,
+          },
+        })
+
+        return {
+          token: sign({ userId: user.id }, APP_SECRET),
+          user,
+        }
+      },
+    })
+    t.field('login', {
+      type: 'AuthPayload',
+      args: {
+        email: schema.stringArg({ required: true }),
+        password: schema.stringArg({ required: true }),
+      },
+      resolve: async (_root, args, ctx) => {
+        const user = await ctx.db.user.findOne({
+          where: {
+            email: args.email,
+          },
+        })
+        if (!user) {
+          throw new Error(`No user found for email: ${args.email}`)
+        }
+
+        const isValidPassword = await compare(args.password, user.password)
+        if (!isValidPassword) {
+          throw new Error('Invalid Password')
+        }
+
+        return {
+          token: sign({ userId: user.id }, APP_SECRET),
+          user,
+        }
+      },
+    })
     t.field('createUser', {
       type: 'User',
       nullable: false,
@@ -78,7 +129,7 @@ schema.extendType({
       type: 'User',
       nullable: false,
       args: {
-        id: intArg({ required: true }),
+        id: schema.intArg({ required: true }),
         data: UserInput,
       },
       resolve(_root, args, ctx) {
@@ -97,7 +148,7 @@ schema.extendType({
       type: 'User',
       nullable: false,
       args: {
-        id: intArg({ required: true }),
+        id: schema.intArg({ required: true }),
       },
       resolve(_root, args, ctx) {
         const user = ctx.db.user.delete({
