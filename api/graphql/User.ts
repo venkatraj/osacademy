@@ -67,12 +67,11 @@ schema.extendType({
         data: UserInput,
       },
       resolve: async (_root, { data }, ctx) => {
-        const { name, email, password } = data
-        const hashedPassword = await hash(password, 10)
+        // const { name, email, password, role } = data
+        const hashedPassword = await hash(data.password, 10)
         const user = await ctx.db.user.create({
           data: {
-            name,
-            email,
+            ...data,
             password: hashedPassword,
           },
         })
