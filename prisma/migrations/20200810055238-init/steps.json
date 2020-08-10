@@ -100,9 +100,48 @@
     {
       "tag": "CreateField",
       "model": "User",
+      "field": "password",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
       "field": "name",
       "type": "String",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "role",
+      "type": "UserRole",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "role"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "role"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "Student"
     },
     {
       "tag": "CreateField",
@@ -250,13 +289,6 @@
     {
       "tag": "CreateField",
       "model": "Course",
-      "field": "updatedAt",
-      "type": "DateTime",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "Course",
       "field": "users",
       "type": "CourseEnrollment",
       "arity": "List"
@@ -307,13 +339,6 @@
       },
       "argument": "",
       "value": "autoincrement()"
-    },
-    {
-      "tag": "CreateField",
-      "model": "CourseEnrollment",
-      "field": "role",
-      "type": "UserRole",
-      "arity": "Required"
     },
     {
       "tag": "CreateField",

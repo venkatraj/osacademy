@@ -1,6 +1,6 @@
-# Migration `20200805085924-initial-tables`
+# Migration `20200810055238-init`
 
-This migration has been generated at 8/5/2020, 2:29:24 PM.
+This migration has been generated at 8/10/2020, 11:22:38 AM.
 You can check out the [state of the schema](./schema.prisma) after the migration.
 
 ## Database Steps
@@ -11,7 +11,9 @@ CREATE TYPE "UserRole" AS ENUM ('Admin', 'Instructor', 'Student');
 CREATE TABLE "public"."User" (
 "id" SERIAL,
 "email" text  NOT NULL ,
+"password" text  NOT NULL ,
 "name" text  NOT NULL ,
+"role" "UserRole" NOT NULL DEFAULT E'Student',
 "createdAt" timestamp(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 PRIMARY KEY ("id"))
 
@@ -20,12 +22,10 @@ CREATE TABLE "public"."Course" (
 "title" text  NOT NULL ,
 "description" text  NOT NULL ,
 "createdAt" timestamp(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"updatedAt" timestamp(3)  NOT NULL ,
 PRIMARY KEY ("id"))
 
 CREATE TABLE "public"."CourseEnrollment" (
 "id" SERIAL,
-"role" "UserRole" NOT NULL ,
 "userId" integer  NOT NULL ,
 "courseId" integer  NOT NULL ,
 PRIMARY KEY ("id"))
@@ -45,10 +45,10 @@ ALTER TABLE "public"."CourseEnrollment" ADD FOREIGN KEY ("courseId")REFERENCES "
 
 ```diff
 diff --git schema.prisma schema.prisma
-migration ..20200805085924-initial-tables
+migration ..20200810055238-init
 --- datamodel.dml
 +++ datamodel.dml
-@@ -1,0 +1,45 @@
+@@ -1,0 +1,44 @@
 +// This is your Prisma schema file,
 +// learn more about it in the docs: https://pris.ly/d/prisma-schema
 +
@@ -62,20 +62,21 @@ migration ..20200805085924-initial-tables
 +}
 +
 +model User {
-+  id Int @id @default(autoincrement())
-+  email String @unique
-+  name  String 
-+  createdAt DateTime @default(now())
-+  courses CourseEnrollment[]
++  id        Int                @id @default(autoincrement())
++  email     String             @unique
++  password  String
++  name      String
++  role      UserRole           @default(Student)
++  createdAt DateTime           @default(now())
++  courses   CourseEnrollment[]
 +}
 +
 +model Course {
-+  id Int @id @default(autoincrement())
-+  title String @unique
++  id          Int                @id @default(autoincrement())
++  title       String             @unique
 +  description String
-+  createdAt DateTime @default(now())
-+  updatedAt DateTime
-+  users CourseEnrollment[]
++  createdAt   DateTime           @default(now())
++  users       CourseEnrollment[]
 +}
 +
 +enum UserRole {
@@ -85,15 +86,13 @@ migration ..20200805085924-initial-tables
 +}
 +
 +model CourseEnrollment {
-+  id Int @id @default(autoincrement())
-+  role UserRole
-+  userId  Int
-+  user User @relation(fields: [userId], references: [id])
-+  courseId  Int
-+  course Course @relation(fields: [courseId], references: [id])
++  id       Int    @id @default(autoincrement())
++  userId   Int
++  user     User   @relation(fields: [userId], references: [id])
++  courseId Int
++  course   Course @relation(fields: [courseId], references: [id])
 +  @@unique([userId, courseId])
 +}
-+
 ```
 
 

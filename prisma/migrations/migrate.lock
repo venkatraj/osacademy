@@ -1,6 +1,3 @@
 # Prisma Migrate lockfile v1
 
-20200805085924-initial-tables
-20200805101949-missing-pwd-field
-20200805102117-remove-updated-at
-20200805104705-userrole-field
+20200810055238-init
